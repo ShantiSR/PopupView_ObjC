@@ -30,13 +30,15 @@ and their respecitve setter methods
 #### Arrow Properties
 `popup.arrowDirection` - Which direction the arrow points  
 PopupView defines an enumeration of Arrow Directions. Use these to set `popup.arrowDirection`  
-`typedef enum {
+```
+typedef enum {
 None,
 Up,
 Right,
 Down,
 Left
-} ArrowDirection;`
+} ArrowDirection;
+```
 
 `popup.arrowSize` - The number of screen points from any corner of the arrow to the center (the arrow's width is `2 x popup.arrowSize`, and it protrudes from the view by `1 x popup.arrowSize`)
 
