@@ -32,15 +32,15 @@ and their respecitve setter methods
 PopupView defines an enumeration of Arrow Directions. Use these to set `popup.arrowDirection`  
 ```
 typedef enum {
-None,
-Up,
-Right,
-Down,
-Left
+    None,
+    Up,
+    Right,
+    Down,
+    Left
 } ArrowDirection;
 ```
 
-`popup.arrowSize` - The number of screen points from any corner of the arrow to the center (the arrow's width is `2 x popup.arrowSize`, and it protrudes from the view by `1 x popup.arrowSize`)
+`popup.arrowSize` - The number of screen points from any corner of the arrow to the center (the arrow's width is `2 * popup.arrowSize`, and it protrudes from the view by `1 * popup.arrowSize`)
 
 `popup.arrowPosition` - The number of screen points from the view's edge to the leading edge of the arrow (on the top and bottom - the number of points to the left edge, on the sides - the number of points to the top edge)  
 If your view has rounded corners, `arrowPosition` is restricted to the straight area between the curves, but the value of `arrowPosition` is not treated any differently
