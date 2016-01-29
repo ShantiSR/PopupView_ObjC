@@ -13,7 +13,8 @@
     CGFloat frameWidth, frameHeight;
 }
 
-@property (nonatomic) CAShapeLayer *popupBubble;
+@property (nonatomic) CAShapeLayer *popupBackground;
+@property (nonatomic) CAShapeLayer *popupBorder;
 @property (nonatomic) UIView *containerView;
 
 @end
@@ -27,7 +28,7 @@
     self = [super init];
 
     [self setupVariables];
-    [self drawPopupBubble];
+    [self drawPopup];
     [self addLayerObservers];
 
     return self;
@@ -43,7 +44,7 @@
     frameWidth = frame.size.width;
     frameHeight = frame.size.height;
     self.containerView.frame = CGRectMake(0, 0, frameWidth, frameHeight);
-    [self drawPopupBubble];
+    [self drawPopup];
     [self addLayerObservers];
 
     return self;
@@ -55,8 +56,9 @@
 
 //Draws the underlying graphic that gives PopupView its appearance
 //Follows a different draw sequence for each ArrowPosition
-- (void)drawPopupBubble {
-    [self.popupBubble removeFromSuperlayer];
+- (void)drawPopup {
+    [self.popupBackground removeFromSuperlayer];
+    [self.popupBorder removeFromSuperlayer];
     CGMutablePathRef path = CGPathCreateMutable();
 
     switch (self.arrowDirection) {
@@ -92,15 +94,17 @@
         }
     }
 
-    self.popupBubble.path = path;
-    [self.layer addSublayer:self.popupBubble];
+    self.popupBackground.path = path;
+    self.popupBorder.path = path;
+    [self.layer addSublayer:self.popupBackground];
     [self bringSubviewToFront:self.containerView];
+    [self.layer addSublayer:self.popupBorder];
 }
 
-//Draws the top line and top right curve of popupBubble
-//Should only be called by drawPopupBubble
+//Draws the top line and top right curve of popupBorder
+//Should only be called by drawPopup
 //Should be first in draw sequence if called
-//Parameter path: The new path for popupBubble
+//Parameter path: The new path for popupBorder
 //Return: The edited path
 - (CGMutablePathRef)drawTop:(CGMutablePathRef)path {
     CGPathMoveToPoint(path, nil, self.cornerRadius, 0);
@@ -109,10 +113,10 @@
     return path;
 }
 
-//Draws the top line, arrow, and top right curve of popupBubble
-//Should only be called by drawPopupBubble
+//Draws the top line, arrow, and top right curve of popupBorder
+//Should only be called by drawPopup
 //Should be first in draw sequence if called
-//Parameter path: The new path for popupBubble
+//Parameter path: The new path for popupBorder
 //Return: The edited path
 - (CGMutablePathRef)drawTopWithArrow:(CGMutablePathRef)path {
     CGPathMoveToPoint(path, nil, self.cornerRadius, 0);
@@ -124,10 +128,10 @@
     return path;
 }
 
-//Draws the right line and bottom right curve of popupBubble
-//Should only be called by drawPopupBubble
+//Draws the right line and bottom right curve of popupBorder
+//Should only be called by drawPopup
 //Should be second in draw sequence if called
-//Parameter path: The new path for popupBubble
+//Parameter path: The new path for popupBorder
 //Return: The edited path
 - (CGMutablePathRef)drawRight:(CGMutablePathRef)path {
     CGPathAddLineToPoint(path, nil, frameWidth, frameHeight - self.cornerRadius);
@@ -135,10 +139,10 @@
     return path;
 }
 
-//Draws the right line, arrow, and bottom right curve of popupBubble
-//Should only be called by drawPopupBubble
+//Draws the right line, arrow, and bottom right curve of popupBorder
+//Should only be called by drawPopup
 //Should be second in draw sequence if called
-//Parameter path: The new path for popupBubble
+//Parameter path: The new path for popupBorder
 //Return: The edited path
 - (CGMutablePathRef)drawRightWithArrow:(CGMutablePathRef)path {
     CGPathAddLineToPoint(path, nil, frameWidth, self.arrowPosition);
@@ -149,10 +153,10 @@
     return path;
 }
 
-//Draws the bottom line and bottom left curve of popupBubble
-//Should only be called by drawPopupBubble
+//Draws the bottom line and bottom left curve of popupBorder
+//Should only be called by drawPopup
 //Should be third in draw sequence if called
-//Parameter path: The new path for popupBubble
+//Parameter path: The new path for popupBorder
 //Return: The edited path
 - (CGMutablePathRef)drawBottom:(CGMutablePathRef)path {
     CGPathAddLineToPoint(path, nil, self.cornerRadius, frameHeight);
@@ -160,10 +164,10 @@
     return path;
 }
 
-//Draws the bottom line, arrow, and bottom left curve of popupBubble
-//Should only be called by drawPopupBubble
+//Draws the bottom line, arrow, and bottom left curve of popupBorder
+//Should only be called by drawPopup
 //Should be third in draw sequence if called
-//Parameter path: The new path for popupBubble
+//Parameter path: The new path for popupBorder
 //Return: The edited path
 - (CGMutablePathRef)drawBottomWithArrow:(CGMutablePathRef)path {
     CGPathAddLineToPoint(path, nil, self.arrowPosition + 2 * self.arrowSize, frameHeight);
@@ -174,11 +178,11 @@
     return path;
 }
 
-//Draws the left line and top left curve of popupBubble
+//Draws the left line and top left curve of popupBorder
 //Draws extra line to close gap if needed
-//Should only be called by drawPopupBubble
+//Should only be called by drawPopup
 //Should be fourth and last in draw sequence if called
-//Parameter path: The new path for popupBubble
+//Parameter path: The new path for popupBorder
 //Return: The edited path
 - (CGMutablePathRef)drawLeft:(CGMutablePathRef)path {
     CGPathAddLineToPoint(path, nil, 0, self.cornerRadius);
@@ -191,11 +195,11 @@
     return path;
 }
 
-//Draws the left line, arrow, and top left curve of popupBubble
+//Draws the left line, arrow, and top left curve of popupBorder
 //Draws extra line to close gap if needed
-//Should only be called by drawPopupBubble
+//Should only be called by drawPopup
 //Should be fourth and last in draw sequence if called
-//Parameter path: The new path for popupBubble
+//Parameter path: The new path for popupBorder
 //Return: The edited path
 - (CGMutablePathRef)drawLeftWithArrow:(CGMutablePathRef)path {
     CGPathAddLineToPoint(path, nil, 0, self.arrowPosition + 2 * self.arrowSize);
@@ -223,14 +227,14 @@
     }
 }
 
-//Sets arrow direction, redraws popupBubble with new arrow
+//Sets arrow direction, redraws popupBorder with new arrow
 //Parameter arrowDirection: The new arrow direction
 - (void)setArrowDirection:(ArrowDirection)arrowDirection {
     _arrowDirection = arrowDirection;
-    [self drawPopupBubble];
+    [self drawPopup];
 }
 
-//Sets postion of arrow's leading edge and enforces boundaries between corners, redraws popupBubble with new arrow
+//Sets postion of arrow's leading edge and enforces boundaries between corners, redraws popupBorder with new arrow
 //Parameter The new position for the leading edge of the arrow
 - (void)setArrowPosition:(CGFloat)arrowPosition {
     if (arrowPosition < self.cornerRadius) {
@@ -246,63 +250,63 @@
     } else {
         _arrowPosition = arrowPosition;
     }
-    [self drawPopupBubble];
+    [self drawPopup];
 }
 
-//Sets size from corner to center of arrow, redraws popupBubble with new arrow
+//Sets size from corner to center of arrow, redraws popupBorder with new arrow
 //Parameter arrowSize: The new size from corner to center of arrow
 - (void)setArrowSize:(CGFloat)arrowSize {
     _arrowSize = arrowSize;
-    [self drawPopupBubble];
+    [self drawPopup];
 }
 
 //Prevents PopupView's background color from being changed
-//Redirects background color to popupBubble
+//Redirects background color to popupBorder
 //Stored for user reference
 //Parameter backgroundColor: The background color being redirected
 - (void)setBackgroundColor:(UIColor *)backgroundColor {
     _backgroundColor = backgroundColor;
-    self.popupBubble.fillColor = (backgroundColor).CGColor;
+    self.popupBackground.fillColor = (backgroundColor).CGColor;
 }
 
 //Prevents PopupView's border color from being changed
-//Redirects border color to popupBubble
+//Redirects border color to popupBorder
 //Stored for user reference
 //Parameter borderColor: The border color being redireced
 - (void)setBorderColor:(CGColorRef)borderColor {
     _borderColor = borderColor;
-    self.popupBubble.strokeColor = borderColor;
+    self.popupBorder.strokeColor = borderColor;
 }
 
 //Prevents PopupView's border width from being changed
-//Redirects border width to popupBubble
+//Redirects border width to popupBorder
 //Stored for user reference
 //Parameter borderWidth: The border width being redireced
 - (void)setBorderWidth:(CGFloat)borderWidth {
     _borderWidth = borderWidth;
-    self.popupBubble.lineWidth = borderWidth;
+    self.popupBorder.lineWidth = borderWidth;
 }
 
 //Prevents PopupView's corner radius from being changed
 //Redirects corner radius to containerView
-//Stored for use in popupBubble and user reference
+//Stored for use in popupBorder and user reference
 //Calls setArrowPosition to enforce new boundaries
 //Parameter cornerRadius: The corner radius being redireced
 - (void)setCornerRadius:(CGFloat)cornerRadius {
     _cornerRadius = cornerRadius;
     self.containerView.layer.cornerRadius = cornerRadius;
     self.arrowPosition = self.arrowPosition;
-    [self drawPopupBubble];
+    [self drawPopup];
 }
 
 //Sets frame and other values dependent on it
-//Redraws popupBubble with new frame
+//Redraws popupBorder with new frame
 - (void)setFrame:(CGRect)frame {
     super.frame = frame;
     frameWidth = frame.size.width;
     frameHeight = frame.size.height;
     self.containerView.frame = CGRectMake(0, 0, frameWidth, frameHeight);
-    [self drawPopupBubble];
+    [self drawPopup];
 }
 
 //Prevents PopupView.layer.masksToBounds from being changed as this would cut off the arrow
@@ -328,7 +332,9 @@
 - (void)setupVariables {
     _changed = NO;
 
-    self.popupBubble = [[CAShapeLayer alloc] init];
+    self.popupBackground = [[CAShapeLayer alloc] init];
+    self.popupBorder = [[CAShapeLayer alloc] init];
+    self.popupBorder.fillColor = [UIColor clearColor].CGColor;
 
     self.arrowDirection = None;
     self.arrowPosition = 0;
